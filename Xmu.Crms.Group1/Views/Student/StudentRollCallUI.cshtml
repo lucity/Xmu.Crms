@@ -63,7 +63,7 @@
                     console.log(data)
                     if (data.callstatus == 2) {
                         $(".blueBigBtn").css("background-color", "#CCCCCC");
-                        //$(".blueBigBtn").attr("disabled", "disabled");
+                        $(".blueBigBtn").attr("disabled", "disabled");
                     }
                     else if (data.callstatus == 0) {
                         $(".blueBigBtn").css("background-color", "#FFA042");
@@ -94,14 +94,14 @@
                             data: {
                                 "classId": window.localStorage.getItem("classid"),
                                 "seminarId": window.localStorage.getItem("seminarid"),
-                                "longitude": 1111,
-                                "latitude": 1233
+                                "longitude": 0,
+                                "latitude": 0
                             },
                             success: function (data, status) {
                                 console.log(data)
                             }
                         });
-                        if (data.callstatus == 2) {
+                        if (data.callstatus == 1) {
                             $(".successCall").show();
                         }
                         else if (data.callstatus == 0) {
