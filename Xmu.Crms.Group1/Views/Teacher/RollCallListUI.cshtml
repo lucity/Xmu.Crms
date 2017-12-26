@@ -13,17 +13,20 @@
     <link href="~/css/RollCallListUI.css" rel="stylesheet" type="text/css" />
     <script>
         $(document).ready(function () {
-            var showLate = window.localStorage.getItem("showLate");
             var classid = window.localStorage.getItem("classid");
+            var showLate = window.localStorage.getItem("showLate");
             var numstudent;
             $.ajax({
                 type: 'GET',
                 url: "/api/class/" + window.localStorage.getItem("classid"),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                headers: {
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
+                },
                 success: function (data, status) {
-                    $(".classNameDiv").append(data.name);
-                    numstudent = data.numstudent;
+                    $(".classNameDiv").append(data.classInfo.name);
+                    numstudent = data.list.length;
                 }
             });
             if (showLate == "false") {
@@ -32,17 +35,20 @@
                     url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    headers: {
+                    data: {
+                        seminarid: window.localStorage.getItem("seminarid"),
                         showLate: showLate
+
                     },
                     success: function (data, status) {
-                        $(".studentSumDiv").append("签到人数:" + data.numPresent + "/" + numstudent);
+                        console.log(data);
+                        $(".studentSumDiv").append("签到人数:" + data.length + "/" + numstudent);
                         var index = 0;
-                        for (var i in data.Data.present) {
+                        for (var i in data) {
                             if (index % 2 == 0)
-                                $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                                $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data[i].name + "</span></div>");
                             else
-                                $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                                $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data[i].name + "</span></div>");
                             index++;
                         }
                     }
