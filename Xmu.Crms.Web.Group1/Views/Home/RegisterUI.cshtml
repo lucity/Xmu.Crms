@@ -1,0 +1,104 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0" />
+    <title>RegisterUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/RegisterUI.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            $("#confirmPassword").change(function () {
+                if ($("#password").val() != $("#confirmPassword").val()) {
+                    $(".tipFont").text("两次密码不同！");
+                    $(".tipFont").show();
+                    $(".tipIcon").show();
+                }
+                else {
+                    $(".tipFont").hide();
+                    $(".tipIcon").hide();
+                }
+            });
+            $("#password").change(function () {
+                if ($("#password").val() == $("#confirmPassword").val()) {
+                    $(".tipFont").hide();
+                    $(".tipIcon").hide();
+                }
+            });
+            $(".confirmButton").click(function () {
+                var checkPhone = /^[\d]{11,13}$/;
+                var str = $("#phone").val();
+                if (!checkPhone.test(str)) {
+                    $(".tipFont").text("手机号格式错误！");
+                    $(".tipFont").show();
+                    $(".tipIcon").show();
+                }
+                else {
+                    if ($("#password").val() != $("#confirmPassword").val()) {
+                        $(".tipFont").text("两次密码不同！");
+                        $(".tipFont").show();
+                        $(".tipIcon").show();
+                    }
+                    else {
+                        $(".tipFont").hide();
+                        $(".tipIcon").hide();
+                        var d = { phone: $("#phone").val(), password: $("#password").val() };
+                        $.ajax({
+                            type: "POST",
+                            url: "/api/me",
+                            data: JSON.stringify(d),
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data, status) {
+                                if (data.status == 1) {
+                                    $(".tipFont").text("用户名已存在！");
+                                    $(".tipFont").show();
+                                    $(".tipIcon").show();
+                                }
+                                else {
+                                    window.localStorage.setItem("id", data.id);
+                                    $(window).attr("location", '/Home/ChooseCharacter');
+                                }
+
+                            }
+                        });
+
+                    }
+                }
+
+            });
+        });
+    </script>
+</head>
+<body class="body" style="background-color:#6cf;">
+    <div class="PictureDiv">
+        <!-- 背景图的div -->
+        <img class="bulb" src="../images/bulb.png" />
+        <img src="../images/bg.png" class="Picture" />
+        <div class="title">注册</div>
+    </div>
+    <div class="hrDiv"></div>
+    <div class="mainView">
+        <div class="phoneID">手机号 :</div>
+        <input id="phone" class="inputphoneID" style="padding:2%;"/>
+        <img class="tipIcon" src="../images/warn.png"/>
+        <div class="tipFont">提交后不能修改</div>
+        <div class="password">密码 :</div>
+        <input id="password" type="password" class="inputPassword" style="padding:2%;"/>
+        <div class="confirmPassword">确认密码 :</div>
+        <input id="confirmPassword" type="password" class="inputConfirmPassword" style="padding:2%;"/>
+        <div class="comfirmDiv">
+            <button class="confirmButton">注册</button>
+        </div> 
+    </div>
+</body>
+</html>

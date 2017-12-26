@@ -1,0 +1,149 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en" class="html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>RollCallListUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/RollCallListUI.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            var showLate = window.localStorage.getItem("showLate");
+            var classid = window.localStorage.getItem("classid");
+            var numstudent;
+            $.ajax({
+                type: 'GET',
+                url: "/api/class/" + window.localStorage.getItem("classid"),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, status) {
+                    $(".classNameDiv").append(data.name);
+                    numstudent = data.numstudent;
+                }
+            });
+            if (showLate == "false") {
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    headers: {
+                        showLate: showLate
+                    },
+                    success: function (data, status) {
+                        $(".studentSumDiv").append("签到人数:" + data.numPresent + "/" + numstudent);
+                        var index = 0;
+                        for (var i in data.Data.present) {
+                            if (index % 2 == 0)
+                                $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                            else
+                                $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                            index++;
+                        }
+                    }
+                });
+            }
+            else {
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    headers: {
+                        showLate: showLate
+                    },
+                    success: function (data, status) {
+                        $(".studentSumDiv").append("签到人数:" + data.numPresent + "/" + numstudent);
+                        var index = 0;
+                        for (var i in data.present) {
+                            if (index % 2 == 0)
+                                $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                            else
+                                $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
+                            index++;
+                        }
+
+                        $("#lateBar").show();
+                        intdex = 0;
+                        for (var i in data.late) {
+                            if (index % 2 == 0)
+                                $("#lateStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i].name + "</span></div>");
+                            else
+                                $("#lateStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i].name + "</span></div>");
+                            index++;
+                        }
+                    }
+                });
+            }
+        });
+    </script>
+</head>
+<body>
+    <!--设置左上角的蓝色板-->
+    <div class="blueBoardDiv">
+        <img src="~/images/blueboard.png" class='blueBoardIcon' />
+    </div>
+
+
+    <!--班级1 的字样-->
+    <div class='classNameDiv'>
+        @*班级1*@
+    </div>
+
+    <!--学生总数：40 的字样-->
+    <div class='studentSumDiv'>
+        @*签到人数：9/40*@
+    </div>
+
+
+    <!--学生名单上面那个蓝色的bar-->
+    <div id="presentStudent">
+        <div class='studentListBarDiv'>
+            <span class="barText">已签到学生</span>
+        </div>
+
+        <!--学生块-->
+        @*<div class='studentBlock'>
+                <img src="~/images/user.png" class='userIcon' />
+                <span class="studentName">杨xx</span>
+            </div>
+
+            <div class='studentBlock'>
+                <img src="~/images/user.png" class='userIcon' />
+                <span class="studentName">周xx</span>
+            </div>
+
+            <div class='studentBlock'>
+                <img src="~/images/user.png" class='userIcon' />
+                <span class="studentName">孙xx</span>
+            </div>*@
+    </div>
+    <!--学生名单上面那个蓝色的bar-->
+    <div id="lateBar"style="display:none"class='studentListBarDiv'>
+        <span class="barText"> 未签到学生</span>
+    </div>
+
+    <!--学生块-->
+    <div id="lateStudent">
+        @*<div class='studentBlock'>
+            <img src="~/images/user.png" class='userIcon' />
+            <span class="studentName">李xx</span>
+        </div>
+
+        <div class='studentBlock'>
+            <img src="~/images/user.png" class='userIcon' />
+            <span class="studentName">王xx</span>
+        </div>
+
+        <div class='studentBlock'>
+            <img src="~/images/user.png" class='userIcon' />
+            <span class="studentName">孙xx</span>
+        </div>*@
+    </div>
+</body>
+</html>

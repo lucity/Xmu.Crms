@@ -1,0 +1,87 @@
+﻿
+@{
+    Layout = null;
+}
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>GroupList</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/GroupList.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $(".btnleader").hide();
+            $(".middlegreyword").hide();
+            $.ajax({
+                type: 'GET',
+                url: "/api/seminar/"+window.localStorage.getItem("seminarid")+"/group",
+                contentType: "application/json; charset=utf-8",
+                data:{
+                    "gradeable": false,
+                    "classid": 0,
+                    "include": true
+                },
+                success: function (data, status) {
+                    var col = "<div class='block'><div class='panel-body'> <div class='column1'><img src='../images/user.png'/></div><div class='column2'>" + data.leader.name
+                        + "<br />" + data.leader.number
+                        + "</div><div class='column3 rightblueword'>队长</div></div></div>";
+                    $("#list").append(col);
+                    for (var i in data.members) {
+                        var col = "<div class='block'><div class='panel-body'> <div class='column1'><img src='../images/user.png'/></div><div class='column2'>" + data.members[i].name
+                            + "<br />" + data.members[i].number + "</div></div></div>";
+                        $("#list").append(col);
+                    }
+                    $(".panel-body").children("p").text(data.topics.name);
+                    $(".seminarblackword").text(data.topics.name+"-"+"固定分组");
+                }
+            });
+            $(".btnleader").click(function () {
+                $(".btnquit").show();
+                $(".btnleader").hide();
+                $(".middlegreyword").hide();
+                $(".column3").show();
+            });
+            $(".btnquit").click(function () {
+                $(".btnquit").hide();
+                $(".btnleader").show();
+                $(".middlegreyword").show();
+                $(".column3").hide();
+            });
+        });
+    </script>
+</head>
+<body class="fullbackground">
+    <div class="columndisplay">
+        <img class="UsersIcon" src="~/images/users.png"/>
+        <label class="seminarblackword"></label>
+    </div>
+
+    <div class="whiteword">
+        <div class="panel-body">
+            <div class="column4">分组信息：</div>
+            <div class="column3"><button class="btnquit">辞职</button></div>
+        </div>
+    </div>
+
+    
+    <div id="list">
+
+    </div>
+
+    <div class="whiteword">
+        <div class="panel-body">
+            <div>选题：</div>
+            <p style="margin:auto; width:80%; text-align:center;"></p>
+        </div>
+    </div>
+    <div class="middlediv">
+        <button class="btnleader">成为队长</button>
+        <p class="middlegreyword">您的队伍还没有队长，您可以选择成为队长。</p>
+    </div>
+
+</body>
+</html>
+

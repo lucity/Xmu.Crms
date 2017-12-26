@@ -1,0 +1,70 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>ChooseCharacter</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/ChooseCharacter.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            $(".teacherButton").click(function () {
+                var d = { type: "teacher", id: window.localStorage.getItem("id") };
+                console.log(d.id);
+                window.localStorage.removeItem("id");
+                $.ajax({
+                    type: "POST",
+                    url: "/api/chooseCharacter",
+                    data: JSON.stringify(d),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, status) {
+                        window.localStorage.setItem("token", data.token);
+                        window.localStorage.setItem("type", data.type);
+                        $(window).attr("location", '/Teacher/TeacherBindingUI');     
+                    }
+                });
+            });
+            $(".studentButton").click(function () {
+                var d = { type: "student", id: window.localStorage.getItem("id") };
+                window.localStorage.removeItem("id");
+                
+                $.ajax({
+                    type: "POST",
+                    url: "/api/chooseCharacter",
+                    data: JSON.stringify(d),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (data, status) {
+                        window.localStorage.setItem("token", data.token);
+                        window.localStorage.setItem("type", data.type);
+                        $(window).attr("location", '/Student/StudentBindingUI');
+                    }
+                });
+            });
+        });
+    </script>
+</head>
+<body class="body">
+    <div class="PictureDiv">
+        <!-- 背景图的div -->
+        <img class="bulb" src="../images/bulb.png" />
+        <img src="../images/background.jpg" class="Picture" />
+        <div class="title">请选择您的身份</div>
+    </div>
+
+    <div class="hrDiv"></div>
+    <div class="teacherDiv">
+        <button class="teacherButton">老师</button>
+    </div>
+    <div class="studentDiv">
+        <button class="studentButton">学生</button>
+    </div>
+</body>
+</html>

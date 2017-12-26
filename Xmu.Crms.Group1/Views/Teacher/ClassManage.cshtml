@@ -1,0 +1,106 @@
+﻿
+@{
+    Layout = null;
+}
+<html lang="en" class="html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>ClassManage</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/ClassManage.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            var groupingMethod = "";
+            window.localStorage.removeItem("trcstatus");
+            $.ajax({
+                type: 'GET',
+                url: "/api/course/" + window.localStorage.getItem("courseid"),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, status) {
+                    $(".title").text(data.name);
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: "/api/course/" + window.localStorage.getItem("courseid") + "/seminar",
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
+                },
+                dataType: "json",
+                success: function (data, status) {
+                    console.log(data);
+                    window.localStorage.setItem("seminarid", data.id);
+                    $(".seminarText").text(data.name);
+                    var startdate = data.startTime.split("T");
+                    var startmonth = startdate[0].split("-")[1];
+                    var startday = startdate[0].split("-")[2];
+                    var enddate = data.endTime.split("T");
+                    var endmonth = enddate[0].split("-")[1];
+                    var endday = enddate[0].split("-")[2];
+                    $("#time").children("span").text(startmonth + "月" + startday + "日-" + endmonth + "月" + endday+"日");
+                    var str = "<span id='groupingM' class='timeText'>";
+                    if (data.isFixed == "true") {
+                        $("#groupingMethod").children("span").text("固定分组");
+                        groupingMethod = "fixed";
+                    }
+                    else {
+                        $("#groupingMethod").children("span").text("随机分组");
+                        groupingMethod = "random";
+                    }                               
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: "/api/course/" + window.localStorage.getItem("courseid") + "/class",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, status) {
+                    for (var i in data) {
+                        $("#classDiv").append("<div class='class'><img id='" + data[i].id + "'src='../../images/classManage.png' class='classIcon'><p class='className'>" + data[i].name + "</p>");
+                    }
+                }
+            });
+            function select() {
+                if (groupingMethod == "fixed") {
+                    window.localStorage.setItem("classid", $(this).attr("id"));
+                    $(window).attr("location", "/Teacher/FixedRollCallUI");
+                }
+                else {
+                    window.localStorage.setItem("classid", $(this).attr("id"));
+                    $(window).attr("location", "/Teacher/RandomRollCallUI");
+                }
+            }
+            $("#classDiv").on('click', '.classIcon', select);
+        });
+    </script>
+</head>
+<body class="body">
+    <!--设置蓝色上方-->
+    <div class="topBox">
+        <span class="title"></span>
+        <span class="seminarText"></span>
+    </div>
+
+    <!--讨论课的时间和分组方式-->
+    <div id="time" class="clockAndGroupDiv">
+        <img src="~/images/clock.png" class="icon">
+        <span></span>
+    </div>
+
+    <div id="groupingMethod"class="clockAndGroupDiv">
+        <img src="~/images/clip.png" class="icon">
+        <span></span>
+    </div>
+
+    <!--班级Icon及名字-->
+    <div id="classDiv">
+    </div>
+    
+
+</body>
+</html>

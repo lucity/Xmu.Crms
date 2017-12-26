@@ -1,0 +1,13 @@
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.deps.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.runtimeconfig.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.runtimeconfig.dev.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Shared.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\bin\Release\netcoreapp2.0\Xmu.Crms.Shared.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.csprojResolveAssemblyReference.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.csproj.CoreCompileInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.AssemblyInfoInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.AssemblyInfo.cs
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Web.Group1\obj\Release\netcoreapp2.0\Xmu.Crms.Web.Group1.pdb

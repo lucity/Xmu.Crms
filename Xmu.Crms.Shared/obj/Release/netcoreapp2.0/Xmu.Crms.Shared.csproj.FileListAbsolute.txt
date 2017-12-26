@@ -1,0 +1,9 @@
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\bin\Release\netcoreapp2.0\Xmu.Crms.Shared.deps.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\bin\Release\netcoreapp2.0\Xmu.Crms.Shared.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\bin\Release\netcoreapp2.0\Xmu.Crms.Shared.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.csprojResolveAssemblyReference.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.csproj.CoreCompileInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.AssemblyInfoInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.AssemblyInfo.cs
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Shared\obj\Release\netcoreapp2.0\Xmu.Crms.Shared.pdb

@@ -1,0 +1,153 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0">
+    <title>FixedRollStartCallUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/RollStartCallUI.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        if ((/iphone|ipod|ipad.*os 5/gi).test(navigator.appVersion)) {
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload()
+                }
+            };
+        }
+        else {
+            onload = function () {
+                var refreshedId = document.getElementById("refreshed");
+                if (refreshedId.value == "no") {
+                    refreshedId.value = "yes";
+                } else {
+                    refreshedId.value = "no";
+                    location.reload();
+                }
+            }
+        }
+        $(document).ready(function () {
+            $(window).bind("unload", function () { });
+            var showPresent = true;
+            var showLate = false;
+            var numstudent;
+            $.ajax({
+                type: 'GET',
+                url: "/api/class/" + window.localStorage.getItem("classid"),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, status) {
+                    $(".classNameDiv").append(data.name);
+                    $(".studentSumDiv").append("学生总数：" + data.numstudent);
+                    numstudent = data.numstudent;
+                    if (window.localStorage.getItem("trcstatus") == null) {
+                        $("#checkStudent").show();
+                        $("#presentnum").text("已签到学生: 0/" + data.numstudent);
+                    }
+                    else {
+                        showLate = true;
+                        $("#presentnum").text("已签到学生: 4/" + numstudent);
+                        $("#check").append("<button id='checkStudent' type='button' class='blueBigBtn' onclick='javascript: window.location = '/Teacher/RollCallListUI''>签到名单</button>")
+                        $("#stuNum").removeClass("studentNum2");
+                        $("#stuNum").addClass("studentNum");
+                        $("#start").remove();
+                        $(".noGroup").remove();
+                        $("#usersIcon").removeClass("usersIcon2");
+                        $("#usersIcon").addClass("usersIcon");
+                    }
+                }
+            });
+            $("#start").click(function () {
+                if ($("#start").text() != "结束签到") {
+                    showLate = false;
+                    $("#start").css("background-color", "#FA8888");
+                    $("#start").text("结束签到")
+                }
+                else {
+                    showLate = true;
+                    window.localStorage.setItem("trcstatus", "success");
+                    $("#presentnum").text("已签到学生: 4/" + numstudent);
+                    $("#checkStudent").remove();
+                    $("#check").append("<button id='checkStudent' type='button' class='blueBigBtn' onclick='javascript: window.location = '/Teacher/RollCallListUI''>签到名单</button>")
+                    $("#stuNum").removeClass("studentNum2");
+                    $("#stuNum").addClass("studentNum");
+                    $("#start").remove();
+                    $(".noGroup").remove();
+                    $("#usersIcon").removeClass("usersIcon2");
+                    $("#usersIcon").addClass("usersIcon");
+                }
+            });
+            $("#checkStudent").click(function () {
+                window.localStorage.setItem("showLate", showLate);
+                $(window).attr("location", "/Teacher/RollCallListUI");
+            });
+            function select() {
+                window.localStorage.setItem("showLate", showLate);
+                $(window).attr("location", "/Teacher/RollCallListUI");
+            }
+            $("#check").on("click", "#checkStudent", select);
+        });
+    </script>
+</head>
+<body class="body">
+    <!--设置左上角的蓝色板-->
+    <div class="blueBoardDiv">
+        <img src="~/images/blueboard.png" class='blueBoardIcon' />
+    </div>
+
+    <!--班级1 的字样-->
+    <div class='classNameDiv'>
+    </div>
+
+    <!--学生总数：40 的字样-->
+    <div class='studentSumDiv'>
+    </div>
+
+    <!--细线，hr不好设置css，用一个高度很小的div来代替-->
+    <div class="hrDiv"></div>
+
+    <!--已签到的学生以及那个icon,当签到开始及结束时，这个
+    部分在中央。当签到开始后结束前，这部分在左边，见.studentNum2。-->
+    <!--
+       <div class="studentNum">
+        <img src="users.png" class="usersIcon"/>
+        已签到学生: 0/40
+      </div>
+    -->
+    <!--已签到的学生+icon+签到名单，表示当签到开始后结束前的样子-->
+    <div id="stuNum" class="studentNum2">
+        <img id="usersIcon" src="~/images/users.png" class="usersIcon2" />
+        <span id='presentnum' class='studentNumText'></span>
+        <button id="checkStudent" type="button" class="blueCallBtn" style="display:none;" onclick="javascript: window.location = '/Teacher/RollCallListUI'">
+            签到名单
+        </button>
+</div>
+
+    <!--下面是button，分为BigBtn和SmallBnt,只有正在签到时
+    的 签到名单按钮 是SmallBnt。 当使用greyBigBtn的时候要加
+    上提示语。-->
+    <div>
+        <div id="check">
+        </div>
+        <button id="start" pe="button" class="blueBigBtn">
+            开始签到
+        </button>
+    </div>
+
+    <div>
+        <button id="checkGroup" type="button" class="greenBigBtn" onclick="javascript: window.location = '/Teacher/FixedGroupInfoUI'">
+            查看分组
+        </button>
+    </div>
+
+    <input type="hidden" id="refreshed" value="no" />
+</body>
+</html>
+
+

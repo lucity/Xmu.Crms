@@ -1,0 +1,182 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width,
+                                     initial-scale=1.0,
+                                     maximum-scale=1.0">
+    <title>GroupInfoUI2</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/GroupInfoUI2.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript">
+        $(document).ready(function () {
+            var index = 1;
+            var stuid;
+            var stuname;
+            var groupid;
+            var showLate = window.localStorage.getItem("showLate");
+            $.ajax({
+                type: 'GET',
+                url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/group",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                data: {
+                    "classid": window.localStorage.getItem("classid")
+                },
+                success: function (data, status) {
+                    for (var i in data) {
+                        id = data[i].id;
+                        $.ajax({
+                            type: 'GET',
+                            url: "/api/group/" + data[i].id,
+                            contentType: "application/json; charset=utf-8",
+                            dataType: "json",
+                            success: function (data, status) {
+                                var str = "";
+                                str += "<div id='" + index + "'><div class='studentListBarDiv'><span class='groupName'>队伍" + index + "</span><span class='groupTopics'>选题：" + data.topics.name + "</span></div>";
+                                str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.leader.name + "</span></div>";
+                                var oddindex = 0;
+                                for (var j in data.members) {
+                                    if (oddindex % 2 != 0)
+                                        str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.members[j].name + "</span></div>";
+                                    else
+                                        str += "<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.members[j].name + "</span></div>";
+                                    oddindex++;
+                                }
+                                if (oddindex % 2 != 0)
+                                    str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><img src='../../images/add.png' class='addIcon' /></div></div>";
+                                else str += "<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><img src='../../images/add.png' class='addIcon' /></div></div>";
+                                $("#block").append(str);
+                                index++;
+                            }
+                        });
+                    }
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                headers: {
+                    showLate: true
+                },
+                success: function (data, status) {
+                    var oddindex = 0;
+                    for (var k in data.late) {
+                        if (oddindex % 2 == 0)
+                            $("#lateStudent").append("<div id='" + data.late[k].id + "' class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[k].name + "</span></div>");
+                        else
+                            $("#lateStudent").append("<div id='" + data.late[k].id + "' class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[k].name + "</span></div>");
+                        $(".modal-body").append("<div id='" + data.late[k].id + "' style='padding:1%;'>" + data.late[k].name + "</div>");
+                        oddindex++;
+                    }
+                }
+            });
+            $("#confirm").click(function () {
+                $("#new").modal("hide");
+                var oddindex = $("#" + groupid).children(":last").index();
+                var style = "studentRightBlock";
+                if (oddindex % 2 != 0) {
+                    style = "studentLeftBlock";
+                    $("#" + groupid).children("div").eq(oddindex).toggleClass("studentLeftBlock");
+                    $("#" + groupid).children("div").eq(oddindex).toggleClass("studentRightBlock");
+                }
+                else {
+                    $("#" + groupid).children("div").eq(oddindex).toggleClass("studentRightBlock");
+                    $("#" + groupid).children("div").eq(oddindex).toggleClass("studentLeftBlock");
+                }
+                $("<div class='" + style + "'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + stuname + "</span><img src='../images/redCross.png' class='redCancelIcon'/></div>").insertBefore($("#" + groupid).children("div").eq(oddindex));
+                for (var i = $("#lateStudent").children("#" + stuid).index() + 1; i <= $("#lateStudent").children(":last").index(); i++) {
+                    $("#lateStudent").children().eq(i).toggleClass("studentLeftBlock");
+                    $("#lateStudent").children().eq(i).toggleClass("studentRightBlock");
+                }
+                $("#lateStudent").children("#" + stuid).remove();
+                $(".modal-body").children("#" + stuid).remove();
+            });
+            function select() {
+                $(this).siblings().toggle();
+            }
+            function addStu() {
+                $("#new").modal("show");
+                groupid = $(this).parent().parent().attr("id");
+            }
+            function deleteStu() {
+                var oddindex = $(this).parent().parent().children("div:last").index();
+                var k = $("#lateStudent").children(":last").index();
+                for (var i = $(this).parent().index() + 1; i <= oddindex; i++) {
+                    $(this).parent().parent().children("div").eq(i).toggleClass("studentRightBlock");
+                    $(this).parent().parent().children("div").eq(i).toggleClass("studentLeftBlock");
+                }
+                stuid = $(this).parent().attr("id");
+                stuname = $(this).parent().children("span").text();
+                if (k % 2 != 0)
+                    $("#lateStudent").append("<div id='" + stuid + "' class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + stuname + "</span></div>");
+                else
+                    $("#lateStudent").append("<div id='" + stuid + "' class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + stuname + "</span></div>");
+                $(".modal-body").append("<div id='" + stuid + "' style='padding:1%;'>" + stuname + "</div>");
+                $(this).parent().remove();
+            }
+            function choose() {
+                stuid = $(this).attr("id");
+                stuname = $(this).text();
+                $(this).parent().children().css("background-color", "white");
+                $(this).css("background-color", "#6cf");
+            }
+            $("#block").on('click', '.studentListBarDiv', select);
+            $("div").on('click', '.addIcon', addStu);
+            $("div").on('click', '.redCancelIcon', deleteStu);
+            $(".modal-body").on('click', 'div', choose);
+        });
+
+    </script>
+
+</head>
+<body>
+    <!--设置左上角的usersIcon-->
+    <div class="blueUsersDiv">
+        <img src="../images/users.png" class='blueUsersIcon'  style="float: left"/>
+        <strong class="title">队伍信息</strong>
+    </div>
+
+    <!--细线，hr不好设置css，用一个高度很小的div来代替-->
+    <div class="hrDiv">
+    </div>
+
+    <div class="modal fade modalstyle" id="new">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title modaltitle" id="myModalLabel">学生添加</h4>
+                </div>
+                <div class="modal-body modalbody">
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default modalclosebutton" data-dismiss="modal">关闭</button>
+                    <button id="confirm" type="button" class="btn btn-primary modalconfirmbutton">确认</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <div id="block">
+
+    </div>
+    <div>
+        <!--迟到学生上面那个蓝色的bar-->
+        <div class='studentNoCallBarDiv'>
+            <span>未签到学生</span>
+        </div>
+        <div id="lateStudent">
+
+        </div>
+    </div>
+</body>
+</html>
+

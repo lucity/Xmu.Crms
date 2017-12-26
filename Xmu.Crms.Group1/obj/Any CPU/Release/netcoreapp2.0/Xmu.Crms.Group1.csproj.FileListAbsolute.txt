@@ -1,0 +1,15 @@
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.deps.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.runtimeconfig.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.runtimeconfig.dev.json
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Services.Group1.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Shared.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Services.Group1.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\bin\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Shared.pdb
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.csprojResolveAssemblyReference.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.csproj.CoreCompileInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.AssemblyInfoInputs.cache
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.AssemblyInfo.cs
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.dll
+D:\GitHub\ManagementSystem\Xmu.Crms.Group1\obj\Any CPU\Release\netcoreapp2.0\Xmu.Crms.Group1.pdb

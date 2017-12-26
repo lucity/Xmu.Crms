@@ -1,0 +1,100 @@
+﻿@{
+    Layout = null;
+}
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0" />
+    <title>StudentBindingUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/StudentBindingUI.css" rel="stylesheet" type="text/css" />
+    <script>
+        if ((/iphone|ipod|ipad.*os 5/gi).test(navigator.appVersion)) {
+            window.onpageshow = function (event) {
+                if (event.persisted) {
+                    window.location.reload()
+                }
+            };
+        }
+        else {
+            onload = function () {
+                var refreshedId = document.getElementById("refreshed");
+                if (refreshedId.value == "no") {
+                    refreshedId.value = "yes";
+                } else {
+                    refreshedId.value = "no";
+                    location.reload();
+                }
+            }
+        }
+
+        $(document).ready(function () {
+            $(window).bind("unload", function () { });
+            $(".inputstudentID").val(window.localStorage.getItem("number"));
+            $(".inputName").val(window.localStorage.getItem("name"));
+            $(".inputSchool").val(window.localStorage.getItem("school"));
+            $(".inputSchool").attr("readonly", "readonly");
+            $("button").click(function () {
+                var d = { number: window.localStorage.getItem("number"), name: window.localStorage.getItem("name"), school: window.localStorage.getItem("schoolid") }
+                var token = window.localStorage.getItem("token");
+                window.localStorage.removeItem("number");
+                window.localStorage.removeItem("name");
+                window.localStorage.removeItem("school");
+                $.ajax({
+                    type: 'POST',
+                    url: "/api/bind",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    data: JSON.stringify(d),
+                    dataType: "json",
+                    contentType: "application/json; charset=utf-8",
+                    success: function (data, status) {
+                        if (data.status == 200)
+                            $(window).attr("location", '/Student/StudentMainUI');
+                        else {
+                            window.localStorage.setItem("token", data.token);
+                            $(window).attr("location", '/Student/StudentMainUI');
+                        }
+                    }
+                });     
+                $(window).attr("location", '/Student/StudentMainUI');
+            });
+            $(".selectSchoolIcon").click(function () {
+                window.localStorage.setItem("number", $(".inputstudentID").val());
+                window.localStorage.setItem("name", $(".inputName").val());
+                $(window).attr("location", '/Home/ChooseSchool');
+            });
+        });
+    </script>
+</head>
+<body class="body">
+    <div class="PictureDiv">
+        <!-- 背景图的div -->
+        <img class="bulb" src="../images/bulb.png" />
+        <img src="../images/background.jpg" class="Picture" />
+        <div class="title">请先绑定您的账号</div>
+    </div>
+    <div class="hrDiv"></div>
+    <div class="mainView">
+        <div class="studentID">学号：</div>
+        <input class="inputstudentID" />
+        <img src="~/images/warn.png" class="tipIcon" />
+        <div class="tipFont">提交后不能修改</div>
+        <div class="Name">姓名：</div>
+        <input class="inputName" />
+        <div class="school">学校：</div>
+        <input class="inputSchool">
+            <img src="~/images/ninedot.png" class="selectSchoolIcon"/>
+        </input>
+        <div class="comfirmDiv">
+            <button class="confirmButton">绑定</button>
+        </div>
+    </div>
+    <input type="hidden" id="refreshed" value="no" />
+</body>
+</html>

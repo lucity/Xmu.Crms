@@ -1,0 +1,49 @@
+﻿
+@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>CourseInfoUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/CourseInfoUI.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: "/api/course/" + window.localStorage.getItem("courseid"),
+                contentType: "application/json; charset=utf-8",
+                success: function (data, status) {
+                    $(".title").text(data.name)
+                    $("#teacher").text("老师：" + data.teacher.name);
+                    $("#email").text("邮箱：" + data.teacher.email);
+                    $("#description").text("简介：" + data.description);
+                }
+            });
+        });
+    </script>
+</head>
+<body class="body">
+    <div class="topBox">
+        <span class="title"></span>
+    </div>
+    <div style="margin-top: 18%">
+        <img src="~/images/headimg.png" class="UserImg" />
+        <p id="teacher" class="NameText"></p>
+    </div>
+    <div>
+        <img src="~/images/letter.png" class="MailImg" />
+        <p id="email" class="MailText"></p>
+    </div>
+    <div>
+        <img src="~/images/file.png" class="PaperImg" />
+        <p id="description" class="IntroText"></p>
+    </div>
+</body>
+</html>
+

@@ -1,0 +1,65 @@
+﻿@{
+    Layout = null;
+}
+<!DOCTYPE html>
+<html lang="en"class="html">
+<head>
+    <meta charset="UTF-8">
+    <meta name="divport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0">
+    <title>TeacherMainUI</title>
+    <link rel="stylesheet" href="~/css/bootstrap.css" />
+    <script src="~/js/jquery-1.11.3.min.js"></script>
+    <script src="~/js/bootstrap.min.js"></script>
+    <link href="~/css/TeacherMainUI.css" rel="stylesheet" type="text/css" />
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: 'GET',
+                url: "/api/me",
+                headers: {
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
+                },
+                contentType: "application/json; charset=utf-8",
+                success: function (data, status) {
+                    console.log(data);
+                    $(".name").text("姓名：" + data.name);
+                    $(".ID").text("教工号：" + data.number);
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: "/api/course",
+                headers: {
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
+                },
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (data, status) {
+                    for (var i in data) {
+                        $("#lowBox").append("<div id='" + data[i].id + "' class='blueBox'><div class='text'> " + data[i].name + "</div></div>");
+                    }
+                }
+            });
+            $(".user").click(function () {
+                $(window).attr("location", '/Teacher/CheckTeacherInfoUI');
+            });
+            function select() {
+                window.localStorage.setItem("courseid", $(this).attr("id"));
+                $(window).attr("location", "/Teacher/ClassManage");
+            }
+            $("#lowBox").on('click', '.blueBox', select);
+        });
+    </script>
+</head>
+
+<body class="body">
+    <div class="PictureDiv">
+        <img class="user" src="../images/user.png" />
+        <img src="../images/background.jpg" class="Picture" />
+        <div class="name">姓名：邱明</div>
+        <div class="ID">教工号：243201522xxxx</div> 
+    </div>
+    <div id="lowBox" class="lowBox">
+    </div>
+</body>
+</html>
