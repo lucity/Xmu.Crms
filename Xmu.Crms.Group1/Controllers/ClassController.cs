@@ -16,10 +16,12 @@ namespace Xmu.Crms.Group1.Controllers
     {
         private IClassService classService;
         private IUserService userService;
-        public ClassController(IClassService classService, IUserService userService)
+        private ISeminarService seminarService;
+        public ClassController(IClassService classService, IUserService userService,ISeminarService seminarService)
         {
             this.classService = classService;
             this.userService = userService;
+            this.seminarService = seminarService;
         }
         //根据班级id获取班级信息
         //GET api/class/{classId}
@@ -35,35 +37,35 @@ namespace Xmu.Crms.Group1.Controllers
             }
             return Json(classinfo);
         }
-        //根据班级id以及seminarid获取学生名单
-        //GET api/class/{classId}
+        //根据班级id以及seminarid获取已经签到学生名单
+        //GET api/class/{classId}/attendance
         [HttpGet("{classid}/attendance")]
-        public IActionResult getAttendanceById(long classid, [FromQuery]bool showLate, [FromQuery]long seminarid)
-        {
-            if (showLate)
-            {
-                var students = userService.ListLateStudent(seminarid, classid);
-                return Json(students);
-            }
-            else
-            {
+        public IActionResult getAttendanceById(long classid,[FromQuery]long seminarid)
+        {           
                 var students = userService.ListPresentStudent(seminarid, classid);
                 return Json(students);
-            }
         }
 
+        //根据班级id以及seminarid获取迟到学生名单
+        //GET api/class/{classid}/late
+        [HttpGet("{classid}/late")]
+        public IActionResult getLate(long classid,[FromBody]dynamic json)
+        {
+            var students = userService.ListLateStudent(json.seminarid, classid);
+            return students;
+        }
 
         //根据classid和seminarid老师开始签到
         //POST api/class/{classId}/startclass
-        [HttpPost("{classid}/startclass")]
-        public IActionResult startClass(long classid,[FromBody]dynamic json)
+        [HttpGet("{classid}/startclass")]
+        public IActionResult startClass(long classid,[FromQuery]long seminarid, [FromQuery]decimal latitude, [FromQuery]decimal longitude)
         {
             Location location = new Location()
             {
                 ClassInfo = classService.GetClassByClassId(classid),
-                Latitude = json.latitude,
-                Longitude=json.longitude,
-                Seminar=json.seminarid,
+                Latitude = latitude,
+                Longitude=longitude,
+                Seminar=seminarService.GetSeminarBySeminarId(seminarid),
                 Status=1
             };
             classService.CallInRollById(location);
@@ -72,28 +74,28 @@ namespace Xmu.Crms.Group1.Controllers
 
         //根据classid和seminarid老师结束签到
         //POST api/class/{classId}/endclass
-        [HttpPost("{classid}/endclass")]
-        public IActionResult endClass(long classid, [FromBody]dynamic json)
+        [HttpGet("{classid}/endclass")]
+        public IActionResult endClass(long classid,[FromQuery]long seminarid)
         {
-            classService.EndCallRollById(json.seminarid, classid);
+            classService.EndCallRollById(seminarid, classid);
             return Json(new { status = 200 });
         }
 
         //根据classid和seminarid获取当前签到情况
         //GET api/class/{classid}/getstatus
         [HttpGet("{classid}/getstatus")]
-        public IActionResult getStatus(long classid,[FromBody]dynamic json)
+        public IActionResult getStatus(long classid, [FromQuery]long seminarid, [FromBody]dynamic json)
         {
             try
             {
-                Location location = classService.GetCallStatusById(json.seminarid, classid);
+                Location location = classService.GetCallStatusById(seminarid, classid);
                 if(location==null)
-                    return Json(new { callstatus = 0 });
+                    return Json(new { callstatus = 2 });//2代表没有这个记录0是签到结束1是正在签到
                 return Json(new { callstatus = location.Status });
             }
-            catch(SeminarNotFoundException e)
+            catch(Exception e)
             {
-                return Json(new { callstatus = 0 });
+                return Json(new { callstatus = 2 });//2代表没有这个记录0是签到结束1是正在签到
             }
         }
     }

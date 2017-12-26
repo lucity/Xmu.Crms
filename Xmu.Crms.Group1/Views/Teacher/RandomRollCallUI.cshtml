@@ -59,14 +59,21 @@
                 },
                 success: function (data, status) {
                     console.log(data);
+                    console.log(window.localStorage.getItem("seminarid"));
                     $(".classNameDiv").append(data.classInfo.name);
                     $(".studentSumDiv").append("学生总数：" + data.list.length);
                     numstudent = data.list.length;
-                    if (callstatus==0) {
+                    if (callstatus==2) {
                         $("#checkStudent").show();
                         $("#presentnum").text("已签到学生: 0/" + data.list.length);
                     }
-                    else {
+                    else if (callstatus == 1)
+                    {
+                        $("#start").css("background-color", "#FA8888");
+                        $("#start").text("结束签到")
+                    }
+                    else if (callstatus == 0)
+                    {
                         $("#presentnum").text("已签到学生: 4/" + numstudent);
                         $("#start").remove();
                         $(".noGroup").remove();
@@ -82,26 +89,26 @@
             });
             $("#start").click(function () {
                 if ($("#start").text() != "结束签到") {
-                    var d = { seminarid: window.localStorage.getItem("seminarid"), latitude: 0, longitude: 0 };
                     $.ajax({
-                        type: 'POST',
+                        type: 'GET',
                         url: "/api/class/" + window.localStorage.getItem("classid")+"/startclass",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
-                        data: JSON.stringify(d),
+                        data: {
+                            seminarid: window.localStorage.getItem("seminarid"),
+                            latitude: 0,
+                            longitude: 0
+                        },
                         headers: {
                             "Authorization": "Bearer " + window.localStorage.getItem("token")
                         },
                         success: function (data, status) {
                         }
                     });
-                    
                     $("#start").css("background-color", "#FA8888");
                     $("#start").text("结束签到")
                 }
                 else {
-                    
-                    window.localStorage.setItem("showLate", showLate);
                     $("#presentnum").text("已签到学生: 4/" + numstudent);
                     $("#start").remove();
                     $(".noGroup").remove();
