@@ -54,24 +54,18 @@ namespace Xmu.Crms.Services.Group1
            
             double tLongtitude = (double)location.Longitude;
             double tLatitude = (double)location.Latitude;
-            double EARTH_RADIUS = 6378.137;//地球半径
-            double radLat1 = rad(tLatitude);
-            double radLat2 = rad(latitude);
-            double a = radLat1 - radLat2;
-            double b = rad(tLongtitude) - rad(longitude);
-            double s = 2 * Math.Asin(Math.Sqrt(Math.Pow(Math.Sin(a / 2), 2) +
-             Math.Cos(radLat1) * Math.Cos(radLat2) * Math.Pow(Math.Sin(b / 2), 2)));
-            s = s * EARTH_RADIUS;
-            s = Math.Round(s * 10000) / 10000;//s为经纬度换算出的实际距离（单位km）
-            Attendance attendance = new Attendance();
-            attendance.ClassInfo.Id = classId;
-            attendance.Seminar.Id = seminarId;
-            if(s<0.1 && location.Status==1)   
-                attendance.AttendanceStatus = AttendanceStatus.Present;
-            else if(s<0.1 && location.Status==0)
-                attendance.AttendanceStatus = AttendanceStatus.Late;
-            _userDao.AddAttendance(attendance);
-
+            if(tLongtitude==longitude&&tLatitude==latitude)
+            {
+                Attendance attendance = new Attendance();
+                if (location.Status == 0)
+                    attendance.AttendanceStatus = Shared.Models.AttendanceStatus.Late;
+                else
+                    attendance.AttendanceStatus = Shared.Models.AttendanceStatus.Present;
+                attendance.Seminar = _userDao.GetSeminar(seminarId);
+                attendance.ClassInfo = _userDao.GetClass(classId);
+                attendance.Student = _userDao.Find(userId);
+                _userDao.AddAttendance(attendance);
+            }            
         }
 
         //list 处于缺勤状态的学生列表

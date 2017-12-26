@@ -33,5 +33,9 @@ namespace Xmu.Crms.Services.Group1.Dao
 
         //通过学号获取用户信息
         UserInfo GetByNumber(string number);
+
+        Seminar GetSeminar(long seminarid);
+
+        ClassInfo GetClass(long classid);
     }
 }

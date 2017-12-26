@@ -145,5 +145,14 @@ namespace Xmu.Crms.Services.Group1
         {
             return _db.UserInfo.Where(s => s.Number == number).SingleOrDefault<UserInfo>();
         }
+
+        public Seminar GetSeminar(long seminarid)
+        {
+            return  _db.Seminar.SingleOrDefault(s => s.Id == seminarid);
+        }
+        public ClassInfo GetClass(long classid)
+        {
+            return _db.ClassInfo.SingleOrDefault(s => s.Id == classid);
+        }
     }
 }
