@@ -43,17 +43,11 @@ namespace Xmu.Crms.Group1.Controllers
         public IActionResult getAttendanceById(long classid,[FromQuery]long seminarid)
         {           
                 var students = userService.ListPresentStudent(seminarid, classid);
-                return Json(students);
+                var latestudents = userService.ListLateStudent(seminarid, classid);
+                return Json(new { present = students, late = latestudents });
         }
 
-        //根据班级id以及seminarid获取迟到学生名单
-        //GET api/class/{classid}/late
-        [HttpGet("{classid}/late")]
-        public IActionResult getLate(long classid,[FromBody]dynamic json)
-        {
-            var students = userService.ListLateStudent(json.seminarid, classid);
-            return students;
-        }
+        
 
         //根据classid和seminarid老师开始签到
         //POST api/class/{classId}/startclass
@@ -84,11 +78,11 @@ namespace Xmu.Crms.Group1.Controllers
         //根据classid和seminarid获取当前签到情况
         //GET api/class/{classid}/getstatus
         [HttpGet("{classid}/getstatus")]
-        public IActionResult getStatus(long classid, [FromQuery]long seminarid, [FromBody]dynamic json)
+        public IActionResult getStatus(long classid, [FromQuery]long seminarid)
         {
             try
             {
-                Location location = classService.GetCallStatusById(seminarid, classid);
+                Location location = classService.GetCallStatusById(4, 1);
                 if(location==null)
                     return Json(new { callstatus = 2 });//2代表没有这个记录0是签到结束1是正在签到
                 return Json(new { callstatus = location.Status });
