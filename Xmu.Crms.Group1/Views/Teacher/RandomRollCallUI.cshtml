@@ -32,16 +32,16 @@
                 }
             }
         }
-        $(document).ready(function () {
+        $(function () {
             $(window).bind("unload", function () { });
             var numstudent;
             var callstatus = 0;
             $.ajax({
                 type: 'GET',
-                url: "/api/class/" + window.localStorage.getItem("classid")+"/getstatus",
+                url: "/api/class/" + window.localStorage.getItem("classid") + "/getstatus",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data:{seminarid: window.localStorage.getItem("seminar")},
+                data: { "seminarid": window.localStorage.getItem("seminar") },
                 headers: {
                     "Authorization": "Bearer " + window.localStorage.getItem("token")
                 },
@@ -71,15 +71,15 @@
                             else if (callstatus == 1) {
                                 $.ajax({
                                     type: 'GET',
-                                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
+                                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance/num",
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     data: {
-                                        seminarid: window.localStorage.getItem("seminarid")
+                                        "seminarid": window.localStorage.getItem("seminarid")
                                     },
                                     success: function (data, status) {
                                         console.log(data);
-                                        $("#presentnum").text("已签到学生: " + data.present.length + "/" + numstudent);
+                                        $("#presentnum").text("已签到学生: " + data.length + "/" + numstudent);
                                         $("#start").css("background-color", "#FA8888");
                                         $("#start").text("结束签到")
                                         $("#start").show();
@@ -90,17 +90,16 @@
                                 });
                             }
                             else if (callstatus == 0) {
-                                console.log("zzzz");
                                 $.ajax({
                                     type: 'GET',
-                                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
+                                    url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance/num",
                                     contentType: "application/json; charset=utf-8",
                                     dataType: "json",
                                     data: {
-                                        seminarid: window.localStorage.getItem("seminarid"),
+                                        "seminarid": window.localStorage.getItem("seminarid"),
                                     },
                                     success: function (data, status) {
-                                        $("#presentnum").text("已签到学生: " + data.present.length + "/" + numstudent);
+                                        $("#presentnum").text("已签到学生: " + data.length + "/" + numstudent);
                                         $("#start").show();
                                         $(".noGroup").show();
                                         $("#checkGroup").show();
@@ -110,22 +109,22 @@
                                         $("#checkStudent").remove();
                                         $("#check").append("<button id='checkStudent' type='button' class='blueBigBtn' onclick='javascript: window.location = '/Teacher/RollCallListUI''>签到名单</button>")
                                         $("#checkGroup").css("background-color", "#66ccff").removeAttr("disabled");
-                                        
+
                                     }
                                 });
-                               
+
                             }
                         }
                     });
                 }
             });
-            
-            
+
+
             $("#start").click(function () {
                 if ($("#start").text() != "结束签到") {
                     $.ajax({
                         type: 'GET',
-                        url: "/api/class/" + window.localStorage.getItem("classid")+"/startclass",
+                        url: "/api/class/" + window.localStorage.getItem("classid") + "/startclass",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         data: {
@@ -189,7 +188,7 @@
                 $(window).attr("location", "/Teacher/RollCallListUI");
             }
             $("#check").on("click", "#checkStudent", select);
-        });
+        })
     </script>
 </head>
 <body>

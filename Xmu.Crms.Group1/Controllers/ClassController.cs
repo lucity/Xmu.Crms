@@ -46,9 +46,12 @@ namespace Xmu.Crms.Group1.Controllers
                 var latestudents = userService.ListLateStudent(seminarid, classid);
                 return Json(new { present = students, late = latestudents });
         }
-
-        
-
+        [HttpGet("{classid}/attendance/num")]
+        public IActionResult getAttendanceNumById(long classid, [FromQuery]long seminarid)
+        {
+            var students = userService.ListPresentStudent(seminarid, classid);
+            return Json(new { length = students.Count });
+        }
         //根据classid和seminarid老师开始签到
         //POST api/class/{classId}/startclass
         [HttpGet("{classid}/startclass")]

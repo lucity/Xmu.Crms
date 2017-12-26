@@ -36,15 +36,6 @@
             var group;
             var isOver = false;
             $(window).bind("unload", function () { });
-            //var topic = window.localStorage.getItem("topic");
-            /*if (topic != null) {
-                $("#btntopic").remove();
-                $("#btnleader").hide();
-                $(".middlegreyword").hide();
-                $(".btnquit").show();
-                //$("#topicBox").append("<p style='margin:auto; width:80%; text-align:center;'>" + topic + "</p>");
-            */
-            //}
             $.ajax({
                 type: 'GET',
                 url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/group",

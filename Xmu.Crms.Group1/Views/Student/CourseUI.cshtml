@@ -38,14 +38,14 @@
                 success: function (data, status) {
                     console.log(data)
                     for (var i in data.seminars) {
-                        if (data.isNow[i]) {
+                        //if (data.isNow[i]) {
                             var box = "blueBox";
                             var gradeStatus = "未完成"
-                        }
-                        else {
-                            var box = "greyBox";
-                            var gradeStatus = "已完成"
-                        }
+                        //}
+                        //else {
+                        //    var box = "greyBox";
+                        //    var gradeStatus = "已完成"
+                        //}
                         index++;
                         if (data.seminars[i].isFixed)
                             var g = "固定分组";
