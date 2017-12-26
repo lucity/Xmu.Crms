@@ -17,11 +17,13 @@ namespace Xmu.Crms.Group1.Controllers
         private IClassService classService;
         private IUserService userService;
         private ISeminarService seminarService;
-        public ClassController(IClassService classService, IUserService userService,ISeminarService seminarService)
+        private ISeminarGroupService seminarGroupService;
+        public ClassController(IClassService classService, IUserService userService,ISeminarService seminarService, ISeminarGroupService seminarGroupService)
         {
             this.classService = classService;
             this.userService = userService;
             this.seminarService = seminarService;
+            this.seminarGroupService = seminarGroupService;
         }
         //根据班级id获取班级信息
         //GET api/class/{classId}
@@ -72,6 +74,7 @@ namespace Xmu.Crms.Group1.Controllers
         public IActionResult endClass(long classid,[FromQuery]long seminarid)
         {
             classService.EndCallRollById(seminarid, classid);
+            seminarGroupService.AutomaticallyGrouping(seminarid, classid);
             return Json(new { status = 200 });
         }
 
@@ -82,7 +85,7 @@ namespace Xmu.Crms.Group1.Controllers
         {
             try
             {
-                Location location = classService.GetCallStatusById(4, 1);
+                Location location = classService.GetCallStatusById(seminarid,classid);
                 if(location==null)
                     return Json(new { callstatus = 2 });//2代表没有这个记录0是签到结束1是正在签到
                 return Json(new { callstatus = location.Status });

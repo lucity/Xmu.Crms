@@ -55,9 +55,9 @@
                                 var index = 0;
                                 for (var i in data.present) {
                                     if (index % 2 == 0)
-                                        $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i] + "</span></div>");
+                                        $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
                                     else
-                                        $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i] + "</span></div>");
+                                        $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
                                     index++;
                                 }
 
@@ -65,9 +65,9 @@
                                 intdex = 0;
                                 for (var i in data.late) {
                                     if (index % 2 == 0)
-                                        $("#lateStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i] + "</span></div>");
+                                        $("#lateStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i].name + "</span></div>");
                                     else
-                                        $("#lateStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i] + "</span></div>");
+                                        $("#lateStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.late[i].name + "</span></div>");
                                     index++;
                                 }
                             }
@@ -90,9 +90,9 @@
                                 var index = 0;
                                 for (var i in data.present) {
                                     if (index % 2 == 0)
-                                        $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i] + "</span></div>");
+                                        $("#presentStudent").append("<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
                                     else
-                                        $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i] + "</span></div>");
+                                        $("#presentStudent").append("<div class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.present[i].name + "</span></div>");
                                     index++;
                                 }
                             }

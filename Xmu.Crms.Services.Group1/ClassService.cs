@@ -15,10 +15,11 @@ namespace Xmu.Crms.Services.ViceVersa
         private readonly IFixGroupService _fixGroupService;
 
         private readonly IClassDao _classDao;
-        public  ClassService(IClassDao classDao)
+        public  ClassService(IClassDao classDao,ISeminarService seminarService, IFixGroupService fixGroupService)
         {
             _classDao = classDao;
-            //_seminarService = seminarService;
+            _seminarService = seminarService;
+            _fixGroupService = fixGroupService;
         }
 
 

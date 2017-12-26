@@ -41,7 +41,7 @@
                 url: "/api/class/" + window.localStorage.getItem("classid")+"/getstatus",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data:{seminarid: window.localStorage.getItem("seminar")},
+                data:{seminarid: window.localStorage.getItem("seminarid")},
                 headers: {
                     "Authorization": "Bearer " + window.localStorage.getItem("token")
                 },
