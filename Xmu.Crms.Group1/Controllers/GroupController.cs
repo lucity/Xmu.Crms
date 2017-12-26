@@ -85,5 +85,27 @@ namespace Xmu.Crms.Group1.Controllers
             seminarGroupService.InsertTopicByGroupId(id, topicId);
             return Json(new { isChoose = true });
         }
+
+        [HttpGet("all")]
+        public IActionResult GetAllGroup([FromQuery]long seminarId, [FromQuery]long classId)
+        {
+            var group = seminarGroupService.ListSeminarGroupBySeminarId(seminarId);
+            List<long> list = new List<long>();
+            foreach(var g in group)
+            {
+                if (g.ClassInfo.Id == classId)
+                    list.Add(g.Id);
+            }
+            return Json(list);
+        }
+
+        [HttpGet("getgroup")]
+        public IActionResult GetGroup([FromQuery]long groupid)
+        {
+            var group = seminarGroupService.ListSeminarGroupMemberByGroupId(groupid);
+            return Json(new { members = group });
+        }
+
+
     }
 }

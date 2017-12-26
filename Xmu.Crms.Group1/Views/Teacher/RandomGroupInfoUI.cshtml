@@ -23,25 +23,38 @@
             var showLate = window.localStorage.getItem("showLate");
             $.ajax({
                 type: 'GET',
-                url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/group",
+                url: "/api/group/all",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                headers: {
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
+                },
                 data: {
-                    "classid": window.localStorage.getItem("classid")
+                    classid: window.localStorage.getItem("classid"),
+                    seminarid: window.localStorage.getItem("seminarid")
                 },
                 success: function (data, status) {
                     for (var i in data) {
-                        id = data[i].id;
+                        id = data[i];
                         $.ajax({
                             type: 'GET',
-                            url: "/api/group/" + data[i].id,
+                            url: "/api/group/getgroup",
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
+                            data: {
+                                classid: window.localStorage.getItem("classid"),
+                                seminarid: window.localStorage.getItem("seminarid"),
+                                groupid: id
+                            },
+                            headers: {
+                                "Authorization": "Bearer " + window.localStorage.getItem("token")
+                            },
                             success: function (data, status) {
+                                console.log(data);
                                 var str = "";
-                                str += "<div id='" + index + "'><div class='studentListBarDiv'><span class='groupName'>队伍" + index + "</span><span class='groupTopics'>选题：" + data.topics.name + "</span></div>";
-                                str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.leader.name + "</span></div>";
-                                var oddindex = 0;
+                                str += "<div id='" + index + "'><div class='studentListBarDiv'><span class='groupName'>队伍" + index + "</span></div>";
+                                //str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.leader.name + "</span></div>";
+                                var oddindex = 1;
                                 for (var j in data.members) {
                                     if (oddindex % 2 != 0)
                                         str += "<div class='studentLeftBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + data.members[j].name + "</span></div>";
@@ -64,8 +77,11 @@
                 url: "/api/class/" + window.localStorage.getItem("classid") + "/attendance",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
+                data: {
+                    seminarid: window.localStorage.getItem("seminarid"),
+                },
                 headers: {
-                    showLate: true
+                    "Authorization": "Bearer " + window.localStorage.getItem("token")
                 },
                 success: function (data, status) {
                     var oddindex = 0;
