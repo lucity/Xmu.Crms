@@ -13,31 +13,48 @@
     <link href="~/css/GradePresentation.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
         $(document).ready(function () {
+            var token = window.localStorage.getItem("token")
+            var count = 0;
+            var score = [];
             $.ajax({
                 type: 'GET',
                 url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/Group",
                 contentType: "application/json; charset=utf-8",
                 data: {
-                    "gradeable": "true"
+                    "isFixed": false,
+                    "gradeable": "true",
+                    "classid": 0,
+                    "include": false
+                },
+                headers: {
+                    "Authorization": "Bearer " + token
                 },
                 success: function (data, status) {
+                    console.log(data)
                     for (var i in data) {
-                        var col = "<div class='GradeDiv'><span class='GroupNum'>" + data[i].name
-                            + "</span> <div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
-                            + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
-                            + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
-                            + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
-                            + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
-                            + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
-                            + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
-                            + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
-                            + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
-                            + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div></div>"
-                        $("#list").append(col);
+                        for (var j in data[i]) {
+                            var index = parseInt(j) + 1
+                            var name = data[i][j].topic.serial + "-" + index;
+                            var col = "<div id='" + count + "' class='GradeDiv'><span id='" + data[i][j].id + "' name='" + data[i][j].topic.id + "'class='GroupNum'>" + name
+                                + "</span> <div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
+                                + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
+                                + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
+                                + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
+                                + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
+                                + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
+                                + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
+                                + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div>"
+                                + "<div> <img id='off' src='../images/heart_empty.png' class='GroupGradeIcon'/>"
+                                + "<img id='on' style='display:none;' src='../images/heart_chosen.png' class='GroupGradeIcon'/></div></div>"
+                            $("#list").append(col);
+                            count++;
+                        }
                     }
+                    for (var i = 0; i < count; i++) score[i] = 0;
                 }
             });
             function hclick() {
+                score[$(this).parent().parent().attr("id")] = $(this).parent().index()
                 $(this).parent().parent().children().children("#on").hide();
                 $(this).parent().parent().children().children("#off").show();
                 $(this).parent().children().toggle();
@@ -45,8 +62,29 @@
             }
             $(".blueBigBtn").click(function () {
                 $(this).remove();
+                for (var i in score) {
+                    var t = $(".GradeDiv").filter("#" + i).children("span").attr("name");
+                    var topicId = parseInt(t)
+                    $.ajax({
+                        type: 'GET',
+                        url: "/api/group/" + $(".GradeDiv").filter("#" + i).children("span").attr("id") + "/grade/presentation",
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        headers: {
+                            "Authorization": "Bearer " + token
+                        },
+                        data: {
+                            "topicId": topicId,
+                            "grade": score[i]
+                        },
+                        success: function (data, status) {
+                            console.log(data)
+                        }
+                    });
+                }
                 $("#list").off('click', '.GroupGradeIcon', hclick)
                 $("#title").text("您的打分结果");
+                window.localStorage.setItem("gradeStatus","over");
             });
             $("#list").on('click', '.GroupGradeIcon', hclick)
         });

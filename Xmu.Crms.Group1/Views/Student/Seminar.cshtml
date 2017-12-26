@@ -14,23 +14,76 @@
     <link href="~/css/Seminar.css" rel="stylesheet" type="text/css" />
     <script>
         $(document).ready(function () {
-            var groupMethod;
+            var token = window.localStorage.getItem("token")
+            var isFixed = false;
             $.ajax({
                 type: 'GET',
-                url: "../api/course/" + window.localStorage.getItem("courseid") + "/seminar",
+                url: "../api/seminar/" + window.localStorage.getItem("seminarid"),
                 contentType: "application/json; charset=utf-8",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 success: function (data, status) {
-                    $(".title2").text(data[0].name);
-                    groupMethod = data[0].groupingMethod;
+                    $(".title2").text(data.name);
+                    isFixed = data.isFixed;                                                                                                                                                      
                 }
             });
             $(".ScoreBox").click(function () {
-                $(window).attr("location", '/Student/Score');
+                var a = window.localStorage.getItem("gradeStatus");
+                if (a == "over") {
+                    alert("您已经打过分了");
+                    return;
+                }
+
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/group",
+                    contentType: "application/json; charset=utf-8",
+                    data: {
+                        "isFixed": false,
+                        "gradeable": false,
+                        "classid": 0,
+                        "include": true
+                    },
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    success: function (data, status) {
+                        if (data == "no") {
+                            alert("分组尚未完成，请耐心等待");
+                            return;
+                        }
+                        else
+                            $(window).attr("location", '/Student/Score');
+                    }
+                });
             });
             $(".GroupBox").click(function () {
-                if (groupMethod == "fixed")
-                    $(window).attr("location", '/Student/FixedGroupList');
-                else $(window).attr("location", '/Student/RandomGroupList');
+
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/group",
+                    contentType: "application/json; charset=utf-8",
+                    data: {
+                        "isFixed": false,
+                        "gradeable": false,
+                        "classid": 0,
+                        "include": true
+                    },
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    success: function (data, status) {
+                        if (data == "no") {
+                            alert("分组尚未完成，请耐心等待");
+                        }
+                        else {
+                            if (isFixed)
+                                $(window).attr("location", '/Student/FixedGroupList');
+                            else $(window).attr("location", '/Student/RandomGroupList');
+                        }
+                    }
+                });
             });
         });
     </script>

@@ -32,22 +32,30 @@
                 type: 'GET',
                 url: "/api/course/" + window.localStorage.getItem("courseid") + "/seminar",
                 contentType: "application/json; charset=utf-8",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 success: function (data, status) {
                     console.log(data)
-                    for (var i in data) {
-                        if (index == 1)
+                    for (var i in data.seminars) {
+                        if (data.isNow[i]) {
                             var box = "blueBox";
-                        else var box = "greyBox";
+                            var gradeStatus = "未完成"
+                        }
+                        else {
+                            var box = "greyBox";
+                            var gradeStatus = "已完成"
+                        }
                         index++;
-                        if (data[i].isFixed)
+                        if (data.seminars[i].isFixed)
                             var g = "固定分组";
                         else var g = "随机分组";
-                        var startTime = data[i].startTime.substr(0,10);
-                        var endTime = data[i].endTime.substr(0, 10);
-                        var col = "<div class='" + box + "' id='" + data[i].id + "'><p class='LeftBoxText'>" + data[i].name
+                        var startTime = data.seminars[i].startTime.substr(0,10);
+                        var endTime = data.seminars[i].endTime.substr(0, 10);
+                        var col = "<div class='" + box + "' id='" + data.seminars[i].id + "'><p class='LeftBoxText'>" + data.seminars[i].name
                             + "</p><p class='RightBoxText1' style='margin-left: 60%;margin-top: 3%;'>" + startTime + "至" + endTime
                             + "</p><p class='RightBoxText2' style='margin-left: 60%;margin-top: 12%;'>" + g
-                            + "</p><p class='RightBoxText3' style='margin-left: 60%;margin-top: 21%;'> 成绩：未完成</p></div>";
+                            + "</p><p class='RightBoxText3' style='margin-left: 60%;margin-top: 21%;'> 成绩：" + gradeStatus + "</p></div>";
                         $("#list").append(col);
                     }
                 }
@@ -57,7 +65,6 @@
             });
             function chooseSeminar() {
                 window.localStorage.setItem("seminarid", $(this).attr("id"));
-      
                 $(window).attr("location", '/Student/Seminar');
             }
             $("#list").on('click', ".blueBox", chooseSeminar);

@@ -29,8 +29,10 @@ namespace Xmu.Crms.Group1.Controllers
         private IFixGroupService fixGroupService;
         private ITopicService topicService;
         private ISeminarService seminarService;
-        public SeminarController(ISeminarGroupService seminarGroupService, ITopicService topicService, ISeminarService seminarService, IFixGroupService fixGroupService)
+        private ICourseService courseService;
+        public SeminarController(ICourseService courseService, ISeminarGroupService seminarGroupService, ITopicService topicService, ISeminarService seminarService, IFixGroupService fixGroupService)
         {
+            this.courseService = courseService;
             this.seminarGroupService = seminarGroupService;
             this.fixGroupService = fixGroupService;
             this.topicService = topicService;
@@ -41,12 +43,14 @@ namespace Xmu.Crms.Group1.Controllers
         public IActionResult Get(long id)
         {
             var seminar = seminarService.GetSeminarBySeminarId(id);
+            var course = courseService.GetCourseByCourseId(seminar.Course.Id);
+            seminar.Course = course;
             return Json(seminar);
         }
         // GET: api/Seminar/5/Group
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/group")]
-        public IActionResult GetGroup(long id, [FromQuery]bool isFixed,[FromQuery]bool gradeable, [FromQuery]long classid, [FromQuery]bool include)
+        public IActionResult GetGroup(long id, [FromQuery]bool isFixed, [FromQuery]bool gradeable, [FromQuery]long classid, [FromQuery]bool include)
         {
             var userId = long.Parse(User.Claims.Single(c => c.Type == "id").Value);
             if (gradeable)
@@ -54,18 +58,54 @@ namespace Xmu.Crms.Group1.Controllers
                 var group = seminarGroupService.GetSeminarGroupById(id, userId);
                 var groupTopics = topicService.ListSeminarGroupTopicByGroupId(group.Id);
                 var allGroups = seminarGroupService.ListSeminarGroupBySeminarId(id);
-                foreach(var g in allGroups)
+                List<SeminarGroup> groups = allGroups.ToList<SeminarGroup>();
+                List<SeminarGroupTopic> topics = new List<SeminarGroupTopic>();
+                var sg = seminarGroupService.GetSeminarGroupByGroupId(groupTopics.First().SeminarGroup.Id);
+                if (groupTopics.Count == 1)
                 {
+                    foreach (var g in allGroups)
+                    {
+                        var t = topicService.ListSeminarGroupTopicByGroupId(g.Id);
+                        if (t.Count <= 0 || g.Id == group.Id || t.First().Id == groupTopics.First().Id)
+                        {
+                            continue;
+                        }
+                        else
+                        {
+                            var sg2 = seminarGroupService.GetSeminarGroupByGroupId(t.First().SeminarGroup.Id);
+                            if (sg2.ClassInfo.Id != sg.ClassInfo.Id)
+                                continue;
+                        }
+                        topics.Add(t.First());
+                    }
                 }
-                return Json(groupTopics);
+                else
+                {
+                    foreach (var g in allGroups)
+                    {
+                        if (g.Id != group.Id)
+                        {
+                            var t = topicService.ListSeminarGroupTopicByGroupId(g.Id);
+                            if (t.Count <= 0)
+                            {
+                                continue;
+                            }
+                            var sg2 = seminarGroupService.GetSeminarGroupByGroupId(t.First().SeminarGroup.Id);
+                            if (sg2.ClassInfo.Id != sg.ClassInfo.Id)
+                                continue;
+                            topics.Add(t.First());
+                        }
+                    }
+                }
+                return Json(topics.GroupBy(g => g.Topic));
             }
-            if(classid != 0)
+            if (classid != 0)
             {
                 if (!isFixed)
                 {
                     var t = seminarGroupService.ListSeminarGroupBySeminarId(id);
                     List<SeminarGroup> groups = new List<SeminarGroup>();
-                    foreach(var g in t)
+                    foreach (var g in t)
                     {
                         if (g.ClassInfo.Id == classid) groups.Add(g);
                     }
@@ -79,22 +119,32 @@ namespace Xmu.Crms.Group1.Controllers
             }
             if (include)
             {
-                var group = seminarGroupService.GetSeminarGroupById(id, userId);
-                var members = seminarGroupService.ListSeminarGroupMemberByGroupId(group.Id);
-                return Json(new { group = group, members = members });
+                try
+                {
+                    var group = seminarGroupService.GetSeminarGroupById(id, userId);
+                    var members = seminarGroupService.ListSeminarGroupMemberByGroupId(group.Id);
+                    return Json(new { group = group, members = members });
+                }
+                catch (Exception e)
+                {
+                    return Json("no");
+                }
             }
             else
-                return Json(new{ status="false" });
+                return Json(new { status = "false" });
         }
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/topic")]
-        public IActionResult GetTopic(long id)
+        public IActionResult GetTopic(long id, [FromQuery]long classid)
         {
             var topics = topicService.ListTopicBySeminarId(id);
-            foreach(var t in topics)
+            List<int> left = new List<int>();
+            foreach (var t in topics)
             {
-                //topicService.GetRestTopicById(t.Id, );
+                int i = topicService.GetRestTopicById(t.Id, classid);
+                left.Add(i);
             }
-            return Json(topics);
+            return Json(new { topics = topics, left = left });
         }
     }
 }

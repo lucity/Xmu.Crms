@@ -15,6 +15,7 @@
     <link href="~/css/RandomGroupChooseTopicUI2.css" rel="stylesheet" type="text/css" />
     <script type="text/javascript">
         $(document).ready(function () {
+            var token = window.localStorage.getItem("token")
             var protocol = location.protocol === "https:" ? "wss:" : "ws:";
             var Uri = protocol + "//" + window.location.host + "?sid=" + parseInt(Math.random() * 1000 + 1);//"/ws";
             var socket = new WebSocket(Uri);
@@ -51,27 +52,32 @@
                 type: 'GET',
                 url: "/api/seminar/" + window.localStorage.getItem("seminarid") + "/topic",
                 contentType: "application/json; charset=utf-8",
+                data: {
+                    classid: window.localStorage.getItem("classid")
+                },
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
                 success: function (data, status) {
-                    var topic = ["A", "B", "C"];
                     console.log(data)
-                    for (var i in data) {
+                    for (var i in data.topics) {
                         var tdiv;
                         var color;
-                        if (data[i].groupLeft == 0)
+                        if (data.left[i] == 0)
                             tdiv = "greyTopicDiv";
                         else {
                             tdiv = "blueTopicDiv";
-                            if (data[i].groupLeft == 1)
+                            if (data.left[i] == 1)
                                 color = "leftNumRed";
                             else color = "leftNumWhite";
                         }
 
-                        var col = "<div><div id='"+ data[i].id +"' class='" + tdiv + "'><span class='topic'>话题" + topic[i]
-                            + "</span><div class='hrVertical'> </div><span class='topicName'>" + data[i].name
-                            + "</span><span class='" + color + "'>剩余 ： " + data[i].groupStudentLimit + "/" + data[i].groupStudentLimit
+                        var col = "<div><div id='" + data.topics[i].id + "' class='" + tdiv + "'><span class='topic'>话题" + data.topics[i].serial
+                            + "</span><div class='hrVertical'> </div><span class='topicName'>" + data.topics[i].name
+                            + "</span><span class='" + color + "'>剩余 ： " + data.left[i] + "/" + data.topics[i].groupNumberLimit
                             + "</span><img src='../images/home.png' class='nineIcon'/></div><div class='topicDescribeDiv'>"
-                            + "<span class='topicDescribeTitle'>" + data[i].name + "</span><span class='topicDescribeText'>"
-                            + data[i].description + "</span> </div> </div>";
+                            + "<span class='topicDescribeTitle'>" + data.topics[i].name + "</span><span class='topicDescribeText'>"
+                            + data.topics[i].description + "</span> </div> </div>";
                         $("#list").append(col);
                     }
 
@@ -86,7 +92,6 @@
                         return;
                     var confirmChoose = window.confirm("确定选择此话题吗？(一旦选定无法修改)");
                     if (confirmChoose) {
-                        window.localStorage.setItem("topic", $(this).children(".topicName").text());
                         var temp = {
                             topicId: $(this).attr("id"),
                             topicName: $(this).children(".topicName").text()
@@ -99,7 +104,20 @@
                             Content: msg
                         };
                         socket.send(JSON.stringify(msgObj));
-                        //window.history.go(-1);
+                        $.ajax({
+                            type: 'GET',
+                            url: "/api/group/" + window.localStorage.getItem("groupid") + "/topic",
+                            contentType: "application/json; charset=utf-8",
+                            data: {
+                                topicId: temp.topicId
+                            },
+                            headers: {
+                                "Authorization": "Bearer " + token
+                            },
+                            success: function (data, status) {
+                                window.history.go(-1);
+                            }
+                        });
                     }
                 }
             }

@@ -42,17 +42,15 @@ namespace Xmu.Crms.Group1.Controllers
             else
             {
                 var classes = classService.ListClassByUserId(id);
-                var courses = "";
-                foreach(var i in classes)
+                List<Course> courses = new List<Course>();
+                List<long> classid = new List<long>();
+                foreach (var i in classes)
                 {
                     var course = courseService.GetCourseByCourseId(i.Course.Id);
-                    var temp =
-                    new {
-                        course = course,
-                        classid = i.Id
-                    };
+                    courses.Add(course);
+                    classid.Add(i.Id);
                 }
-                return Json(courses);
+                return Json(new { courses = courses, classid = classid });
             }
             
         }
@@ -82,7 +80,21 @@ namespace Xmu.Crms.Group1.Controllers
                     if (d1.Days < 0 && d2.Days >= 0)
                         return Json(s);
                 }
-            }            
+            }
+            else
+            {
+                List<bool> isNow = new List<bool>();
+                foreach (var s in seminars)
+                {
+                    DateTime now = DateTime.Now;
+                    TimeSpan d1 = s.StartTime - now;
+                    TimeSpan d2 = s.EndTime - now;
+                    if (d1.Days < 0 && d2.Days >= 0)
+                        isNow.Add(true);
+                    else isNow.Add(false);
+                }
+                return Json(new { seminars = seminars, isNow = isNow });
+            }
             return Json(seminars);
         }
 

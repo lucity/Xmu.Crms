@@ -1,4 +1,5 @@
-﻿using System;
+﻿using Microsoft.EntityFrameworkCore;
+using System;
 using System.Collections.Generic;
 using System.Data.SqlClient;
 using System.Linq;
@@ -145,7 +146,7 @@ namespace Xmu.Crms.Services.HighGrade
             if (seminarId < 0)
                 throw new ArgumentException();
 
-            var seminar = _db.Seminar.SingleOrDefault(_seminar => _seminar.Id == seminarId);
+            var seminar = _db.Seminar.Include(s => s.Course).SingleOrDefault(_seminar => _seminar.Id == seminarId);
             if (seminar == null)//I add it myself
                 throw new SeminarNotFoundException();
 

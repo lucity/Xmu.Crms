@@ -56,6 +56,14 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(user);
         }
 
+        [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
+        [HttpGet("rollcall")]
+        public IActionResult rollCall([FromQuery]long classId, [FromQuery]long seminarId, [FromQuery]string longitude, [FromQuery]string latitude)
+        {
+            var id = long.Parse(User.Claims.Single(c => c.Type == "id").Value);
+            userService.InsertAttendanceById(classId, seminarId, id, double.Parse(longitude), double.Parse(latitude));
+            return Json(new { status = 200 });
+        }
 
         //更换头像
         //POST: api/avatar

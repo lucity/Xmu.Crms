@@ -33,15 +33,85 @@
         }
         $(document).ready(function () {
             $(window).bind("unload", function () { });
-            if (window.localStorage.getItem("rcstatus") != null) {
-                $(".blueBigBtn").hide();
-                $(".successCall").show();
-            }
+            var token = window.localStorage.getItem("token")
+            $.ajax({
+                type: 'GET',
+                url: "/api/seminar/" + window.localStorage.getItem("seminarid"),
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                success: function (data, status) {
+                    console.log(data)
+                    var d = new Date()
+                    $(".courseInfoDiv").eq(0).children("strong").text(data.course.teacher.name);
+                    $(".courseInfoDiv").eq(1).children("strong").text(data.course.teacher.email);
+                    $(".courseInfoDiv").eq(2).children("strong").text(d.getFullYear() + "-" + d.getMonth() + "-" + d.getDate());
+                }
+            });
+            $.ajax({
+                type: 'GET',
+                url: "/api/class/" + window.localStorage.getItem("classid") + "/getstatus",
+                contentType: "application/json; charset=utf-8",
+                headers: {
+                    "Authorization": "Bearer " + token
+                },
+                data: {
+                    "seminarid": window.localStorage.getItem("seminarid")
+                },
+                success: function (data, status) {
+                    console.log(data)
+                    if (data.callstatus == 2) {
+                        $(".blueBigBtn").css("background-color", "#CCCCCC");
+                        //$(".blueBigBtn").attr("disabled", "disabled");
+                    }
+                    else if (data.callstatus == 0) {
+                        $(".blueBigBtn").css("background-color", "#FFA042");
+                    }
+                    $(".blueBigBtn").show();
+                }
+            });
             $(".blueBigBtn").click(function () {
-                $(".blueBigBtn").hide();
-                $(".successCall").show();
-                window.localStorage.setItem("rcstatus", "success");
-                setTimeout(function () { window.history.go(-1); }, 1000);
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/class/" + window.localStorage.getItem("classid") + "/getstatus",
+                    contentType: "application/json; charset=utf-8",
+                    headers: {
+                        "Authorization": "Bearer " + token
+                    },
+                    data: {
+                        "seminarid": window.localStorage.getItem("seminarid")
+                    },
+                    success: function (data, status) {
+                        console.log(data)
+                        $.ajax({
+                            type: 'GET',
+                            url: "/api/rollcall",
+                            contentType: "application/json; charset=utf-8",
+                            headers: {
+                                "Authorization": "Bearer " + token
+                            },
+                            data: {
+                                "classId": window.localStorage.getItem("classid"),
+                                "seminarId": window.localStorage.getItem("seminarid"),
+                                "longitude": 1111,
+                                "latitude": 1233
+                            },
+                            success: function (data, status) {
+                                console.log(data)
+                            }
+                        });
+                        if (data.callstatus == 2) {
+                            $(".successCall").show();
+                        }
+                        else if (data.callstatus == 0) {
+                            $(".lateCall").show();
+                        }
+
+                        $(".blueBigBtn").hide();
+                    }
+                });
+                //setTimeout(function () { window.history.go(-1); }, 1000);
             });
         });
     </script>
@@ -62,19 +132,15 @@
         <!--课堂信息，由一个icon和一行文字组成-->
         <div class="courseInfoDiv">
             <img src="../images/teacher.png" class='courseInfoIcon' />
-            <strong>邱明</strong>
+            <strong></strong>
         </div>
         <div class="courseInfoDiv">
             <img src="../images/letter.png" class='courseInfoIcon' />
-            <strong>mingqiu@gmail.com</strong>
+            <strong></strong>
         </div>
         <div class="courseInfoDiv">
             <img src="../images/calendar.png" class='courseInfoIcon' />
-            <strong>2017-11-11</strong>
-        </div>
-        <div class="courseInfoDiv">
-            <img src="../images/site.png" class='courseInfoIcon' />
-            <strong>海韵教学楼201</strong>
+            <strong></strong>
         </div>
     </div>
 
@@ -89,7 +155,7 @@
      </div>
     <!--签到按钮-->
     <div>
-        <button type="button" class="blueBigBtn">
+        <button type="button" class="blueBigBtn" style="display:none;">
             签到
         </button>
     </div>

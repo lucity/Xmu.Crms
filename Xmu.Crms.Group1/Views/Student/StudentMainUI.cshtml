@@ -37,11 +37,11 @@
                 success: function (data) {
                     console.log(data)
                     var box = "blueBox";
-                    for (var i in data) {
-                        if (data[i].id > 2)
+                    for (var i in data.courses) {
+                        if (data.courses[i].id > 2)
                             box = "greyBox";
-                        var col = "<div id='" + data[i].id + "' class='" + box + "'><p class='leftText'>" + data[i].name
-                            + "</p> <p class='rightText'>老师：" + data[i].teacher.name + "</p></div>";
+                        var col = "<div id='" + data.courses[i].id + "' class='" + box + "'><p id='"+ data.classid[i] +"' class='leftText'>" + data.courses[i].name
+                            + "</p> <p class='rightText'>老师：" + data.courses[i].teacher.name + "</p></div>";
                         $("#list").append(col);
                     }
 
@@ -52,6 +52,8 @@
             });
             function chooseCourse() {
                 window.localStorage.setItem("courseid", $(this).attr("id"));
+                console.log($(this).children("p:first").attr("id"))
+                window.localStorage.setItem("classid", $(this).children("p:first").attr("id"));
                 $(window).attr("location", '/Student/CourseUI');
             }
             $("#list").on('click', '.blueBox', chooseCourse);
