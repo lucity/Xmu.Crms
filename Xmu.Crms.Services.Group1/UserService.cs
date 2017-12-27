@@ -74,11 +74,7 @@ namespace Xmu.Crms.Services.Group1
             if (seminarId.GetType().ToString() != "System.Int64" || classId.GetType().ToString() != "System.Int64")
                 throw new ArgumentException();//id格式错误
             IList<UserInfo> list  = _userDao.FindAbsenceStudents(seminarId, classId);
-            if (list == null)
-            {
-                throw new ClassNotFoundException();//未找到对应班级
-                throw new SeminarNotFoundException();//未找到对应讨论课
-            }
+
             return list;
         }
 
@@ -88,11 +84,7 @@ namespace Xmu.Crms.Services.Group1
             if (seminarId.GetType().ToString() != "System.Int64" || classId.GetType().ToString() != "System.Int64")
                 throw new ArgumentException();//id格式错误
             IList < Attendance > list= _userDao.FindAttendanceById(seminarId, classId);
-            if(list==null)
-            {
-                throw new ClassNotFoundException();//未找到对应班级
-                throw new SeminarNotFoundException();//未找到对应讨论课
-            }
+
             return list;
         }
 
@@ -119,11 +111,7 @@ namespace Xmu.Crms.Services.Group1
             if (seminarId.GetType().ToString() != "System.Int64" || classId.GetType().ToString() != "System.Int64")
                 throw new ArgumentException();//id格式错误
             IList<UserInfo> list = _userDao.FindLateStudents(seminarId, classId);
-            if (list == null)
-            {
-                throw new ClassNotFoundException();//未找到对应班级
-                throw new SeminarNotFoundException();//未找到对应讨论课
-            }
+
             return list;
         }
 
@@ -136,7 +124,7 @@ namespace Xmu.Crms.Services.Group1
             foreach (Attendance Temp in AttendanceList)
             {
                 if (Temp.AttendanceStatus == 0)
-                    PresentStudentList.Add(GetUserByUserId(Temp.Id));
+                    PresentStudentList.Add(GetUserByUserId(Temp.Student.Id));
             }
             if (PresentStudentList == null) throw new SeminarNotFoundException();
 
