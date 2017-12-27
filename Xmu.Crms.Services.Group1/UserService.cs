@@ -54,7 +54,7 @@ namespace Xmu.Crms.Services.Group1
            
             double tLongtitude = (double)location.Longitude;
             double tLatitude = (double)location.Latitude;
-            if(tLongtitude==longitude&&tLatitude==latitude)
+            if((int)tLongtitude == (int)longitude && (int)tLatitude == (int)latitude)
             {
                 Attendance attendance = new Attendance();
                 if (location.Status == 0)

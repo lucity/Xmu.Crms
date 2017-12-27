@@ -13,6 +13,7 @@
     <script src="~/js/jquery-1.11.3.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <link href="~/css/RollStartCallUI.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
     <script type="text/javascript">
         if ((/iphone|ipod|ipad.*os 5/gi).test(navigator.appVersion)) {
             window.onpageshow = function (event) {
@@ -36,12 +37,20 @@
             $(window).bind("unload", function () { });
             var numstudent;
             var callstatus = 0;
+            var lat;
+            var lng;
+            var geolocation = new qq.maps.Geolocation("QM7BZ-I3ZRX-NTC4L-ZA3X3-JAQPV-FWFJC", "ClassManagementSystem");
+            
+            function showPosition(position) {
+                lat = position.lat;
+                lng = position.lng;
+            };
             $.ajax({
                 type: 'GET',
-                url: "/api/class/" + window.localStorage.getItem("classid")+"/getstatus",
+                url: "/api/class/" + window.localStorage.getItem("classid") + "/getstatus",
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
-                data:{seminarid: window.localStorage.getItem("seminarid")},
+                data: { seminarid: window.localStorage.getItem("seminarid") },
                 headers: {
                     "Authorization": "Bearer " + window.localStorage.getItem("token")
                 },
@@ -110,28 +119,29 @@
                                         $("#checkStudent").remove();
                                         $("#check").append("<button id='checkStudent' type='button' class='blueBigBtn' onclick='javascript: window.location = '/Teacher/RollCallListUI''>签到名单</button>")
                                         $("#checkGroup").css("background-color", "#66ccff").removeAttr("disabled");
-                                        
+
                                     }
                                 });
-                               
+
                             }
                         }
                     });
                 }
             });
-            
-            
+
+
             $("#start").click(function () {
                 if ($("#start").text() != "结束签到") {
+                    geolocation.getLocation(showPosition, null)
                     $.ajax({
                         type: 'GET',
-                        url: "/api/class/" + window.localStorage.getItem("classid")+"/startclass",
+                        url: "/api/class/" + window.localStorage.getItem("classid") + "/startclass",
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         data: {
                             seminarid: window.localStorage.getItem("seminarid"),
-                            latitude: 0,
-                            longitude: 0
+                            latitude: lat,
+                            longitude: lng
                         },
                         headers: {
                             "Authorization": "Bearer " + window.localStorage.getItem("token")

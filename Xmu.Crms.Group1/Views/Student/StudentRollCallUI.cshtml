@@ -12,6 +12,7 @@
     <script src="~/js/jquery-1.11.3.min.js"></script>
     <script src="~/js/bootstrap.min.js"></script>
     <link href="~/css/StudentRollCallUI.css" rel="stylesheet" type="text/css" />
+    <script type="text/javascript" src="https://3gimg.qq.com/lightmap/components/geolocation/geolocation.min.js"></script>
     <script>
         if ((/iphone|ipod|ipad.*os 5/gi).test(navigator.appVersion)) {
             window.onpageshow = function (event) {
@@ -34,6 +35,12 @@
         $(document).ready(function () {
             $(window).bind("unload", function () { });
             var token = window.localStorage.getItem("token")
+            var lat;
+            var lng;
+            function showPosition(position) {
+                lat = position.lat;
+                lng = position.lng;
+            };
             $.ajax({
                 type: 'GET',
                 url: "/api/seminar/" + window.localStorage.getItem("seminarid"),
@@ -84,6 +91,7 @@
                     },
                     success: function (data, status) {
                         console.log(data)
+                        geolocation.getLocation(showPosition, null)
                         $.ajax({
                             type: 'GET',
                             url: "/api/rollcall",
@@ -94,12 +102,12 @@
                             data: {
                                 "classId": window.localStorage.getItem("classid"),
                                 "seminarId": window.localStorage.getItem("seminarid"),
-                                "longitude": 0,
-                                "latitude": 0
+                                "longitude": lat,
+                                "latitude": lng
                             },
                             success: function (data, status) {
                                 console.log(data)
-                                window.localStorage.setItem("attendStatus","over");
+                                window.localStorage.setItem("attendStatus", "over");
                             }
                         });
                         if (data.callstatus == 1) {
