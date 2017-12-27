@@ -223,37 +223,64 @@ namespace Xmu.Crms.Services.Insomnia
 
         public void AutomaticallyGrouping(long seminarId, long classId)
         {
-            Seminar seminar = _db.Seminar.SingleOrDefault(s => s.Id == seminarId);
-            ClassInfo classInfo = _db.ClassInfo.SingleOrDefault(s => s.Id == classId);
-            List<Attendance> attendlist = _db.Attendences.Where(s => s.Seminar.Id == seminarId && s.ClassInfo.Id == classId).Include(s => s.Student).ToList<Attendance>();
-            List<Topic> topiclist = _db.Topic.Where(t => t.Seminar.Id == seminarId).ToList<Topic>();
-            int group = 0;
-            foreach(var t in topiclist)
+            if (seminarId < 0 || classId < 0)
             {
-                group += t.GroupNumberLimit;
+                throw new ArgumentException();
             }
-            int student = attendlist.Count();
-            for(int i=0;i<group;i++)
+
+            var seminar = _db.Seminar.Find(seminarId);
+            if (seminar == null)
             {
-                SeminarGroup seminarGroup = new SeminarGroup()
+                throw new SeminarNotFoundException();
+            }
+
+            var classes = _db.ClassInfo.Find(classId);
+            if (classes == null)
+            {
+                throw new ClassNotFoundException();
+            }
+
+            var members = new List<UserInfo>();
+            _db.CourseSelection.Where(c => c.ClassInfo.Id == classId)
+                .Select(c => c.Student)
+                .ToList().ForEach(member => members.Add(member));
+            var count = 0;
+            UserInfo[] memArrays = { };
+            members.ForEach(member => memArrays[count++] = member);
+            var looptime = memArrays.Length / 2;
+            var tick = DateTime.Now.Ticks;
+            var ran = new Random((int) (tick & 0xffffffffL) | (int) (tick >> 32));
+            while (looptime >= 0)
+            {
+                var ran1 = ran.Next(0, memArrays.Length);
+                var ran2 = ran.Next(0, memArrays.Length);
+                var temp = memArrays[ran1];
+                memArrays[ran1] = memArrays[ran2];
+                memArrays[ran2] = temp;
+                looptime--;
+            }
+
+            var countgroup = memArrays.Length / 5 + 1;
+            for (var i = 0; i < countgroup; i++)
+            {
+                _db.SeminarGroup.Add(new SeminarGroup
                 {
                     Seminar = seminar,
-                    ClassInfo = classInfo
-                };
-                _db.SeminarGroup.Add(seminarGroup);
-                for(int j=0;j<student;j++)
+                    ClassInfo = classes
+                });
+                var group = _db.SeminarGroup.Where(s => s.Seminar.Id == seminarId)
+                    .SingleOrDefault(s => s.ClassInfo.Id == classId);
+                for (var j = 0; j < 5; j++)
                 {
-                    if(j%group==i)
+                    var usertemp = memArrays[i * 5 + j];
+                    _db.SeminarGroupMember.Add(new SeminarGroupMember
                     {
-                        SeminarGroupMember seminarGroupMember = new SeminarGroupMember()
-                        {
-                            SeminarGroup = seminarGroup,
-                            Student = _db.UserInfo.SingleOrDefault(s => s.Id == attendlist[j].Student.Id)
-                        };
-                        _db.SeminarGroupMember.Add(seminarGroupMember);
-                    }
+                        SeminarGroup = group,
+                        Student = usertemp
+                    });
                 }
             }
+
             _db.SaveChanges();
         }
 
