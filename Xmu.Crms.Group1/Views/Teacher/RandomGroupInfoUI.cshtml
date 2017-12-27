@@ -20,7 +20,6 @@
             var stuid;
             var stuname;
             var groupid;
-            var showLate = window.localStorage.getItem("showLate");
             $.ajax({
                 type: 'GET',
                 url: "/api/group/all",
@@ -115,6 +114,25 @@
                 }
                 $("#lateStudent").children("#" + stuid).remove();
                 $(".modal-body").children("#" + stuid).remove();
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/group/add",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+                        groupid: groupid,
+                        userid:stuid,
+                        seminarid: window.localStorage.getItem("seminarid"),
+                    },
+                    headers: {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token")
+                    },
+                    success: function (data, status) {
+
+                        }
+                    }
+                });
+
             });
             function select() {
                 $(this).siblings().toggle();
@@ -124,6 +142,7 @@
                 groupid = $(this).parent().parent().attr("id");
             }
             function deleteStu() {
+                groupid = $(this).parent().parent().attr("id");
                 var oddindex = $(this).parent().parent().children("div:last").index();
                 var k = $("#lateStudent").children(":last").index();
                 for (var i = $(this).parent().index() + 1; i <= oddindex; i++) {
@@ -138,6 +157,24 @@
                     $("#lateStudent").append("<div id='" + stuid + "' class='studentRightBlock'><img src='../../images/user.png' class='userIcon' /><span class='studentName'>" + stuname + "</span></div>");
                 $(".modal-body").append("<div id='" + stuid + "' style='padding:1%;'>" + stuname + "</div>");
                 $(this).parent().remove();
+                $.ajax({
+                    type: 'GET',
+                    url: "/api/group/add",
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    data: {
+                        groupid: groupid,
+                        userid: stuid,
+                        seminarid: window.localStorage.getItem("seminarid"),
+                    },
+                    headers: {
+                        "Authorization": "Bearer " + window.localStorage.getItem("token")
+                    },
+                    success: function (data, status) {
+
+                    }
+                }
+                });
             }
             function choose() {
                 stuid = $(this).attr("id");

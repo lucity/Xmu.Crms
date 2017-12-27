@@ -394,5 +394,12 @@ namespace Xmu.Crms.Services.Insomnia
                 .Where(s => s.SeminarGroup.Id == groupId));
             _db.SaveChanges();
         }
+
+        public void DeleteSeminarGroupMemberById(long userid,long groupid)
+        {
+            SeminarGroupMember seminarGroupMember = _db.SeminarGroupMember.Where(s => s.Student.Id == userid && s.SeminarGroup.Id == groupid).SingleOrDefault<SeminarGroupMember>();
+            _db.SeminarGroupMember.Remove(seminarGroupMember);
+            _db.SaveChanges();
+        }
     }
 }

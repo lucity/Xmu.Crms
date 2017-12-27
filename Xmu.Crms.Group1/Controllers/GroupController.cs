@@ -104,5 +104,18 @@ namespace Xmu.Crms.Group1.Controllers
             var group = seminarGroupService.ListSeminarGroupMemberByGroupId(groupid);
             return Json(new { members = group });
         }
+        [HttpGet("add")]
+        public IActionResult addStudent([FromQuery]long groupid, [FromQuery]long userid)
+        {
+            seminarGroupService.InsertSeminarGroupMemberById(userid, groupid);
+            return Json(new { status = "200" });
+        }
+
+        [HttpGet("delete")]
+        public IActionResult deleteStudent([FromQuery]long groupid, [FromQuery]long userid)
+        {
+            seminarGroupService.DeleteSeminarGroupMemberById(userid, groupid);
+            return Json(new { status = "200" });
+        }
     }
 }

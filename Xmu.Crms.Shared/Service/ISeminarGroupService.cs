@@ -213,5 +213,8 @@ namespace Xmu.Crms.Shared.Service
         /// <exception cref="T:Xmu.Crms.Shared.Exceptions.GroupNotFoundException">未找到小组</exception>
         /// <exception cref="T:System.InvalidOperationException">学生不是组长</exception>
         void ResignLeaderById(long groupId, long userId);
+
+
+        void DeleteSeminarGroupMemberById(long userid, long groupid);
     }
 }
