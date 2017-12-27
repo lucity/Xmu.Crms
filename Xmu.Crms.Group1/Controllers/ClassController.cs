@@ -95,5 +95,11 @@ namespace Xmu.Crms.Group1.Controllers
                 return Json(new { callstatus = 2 });//2代表没有这个记录0是签到结束1是正在签到
             }
         }
+        [HttpGet("{classid}/attendance/num")]
+        public IActionResult getAttendanceNumById(long classid, [FromQuery]long seminarid)
+        {
+            var students = userService.ListPresentStudent(seminarid, classid);
+            return Json(new { length = students.Count });
+        }
     }
 }
