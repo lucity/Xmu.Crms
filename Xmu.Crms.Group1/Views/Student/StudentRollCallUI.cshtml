@@ -99,6 +99,7 @@
                             },
                             success: function (data, status) {
                                 console.log(data)
+                                window.localStorage.setItem("attendStatus","over");
                             }
                         });
                         if (data.callstatus == 1) {

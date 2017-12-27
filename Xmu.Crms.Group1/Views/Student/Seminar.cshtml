@@ -28,6 +28,13 @@
                     isFixed = data.isFixed;                                                                                                                                                      
                 }
             });
+            $(".CallBox").click(function () {
+                var a = window.localStorage.getItem("attendStatus");
+                if (a == "over") {
+                    alert("您已完成签到");
+                    return;
+                }
+            });
             $(".ScoreBox").click(function () {
                 var a = window.localStorage.getItem("gradeStatus");
                 if (a == "over") {
@@ -97,7 +104,7 @@
         <span class="ScoreText" style="margin-top: 100%">打分</span>
     </div>
     <div class="CallBox">
-        <span class="CallText" onclick="javascript: window.location = '/Student/StudentRollCallUI'">签到</span>
+        <span class="CallText">签到</span>
     </div>
     <div class="GroupBox">
         <span class="GroupText">组队和选题</span>
