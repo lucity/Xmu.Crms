@@ -38,6 +38,7 @@ namespace Xmu.Crms.Group1.Controllers
             this.topicService = topicService;
             this.seminarService = seminarService;
         }
+        //通过seminarid获得seminar
         // GET: api/Seminar/5
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -47,6 +48,8 @@ namespace Xmu.Crms.Group1.Controllers
             seminar.Course = course;
             return Json(seminar);
         }
+
+        //根据传递的参数信息，获取对应的小组信息
         // GET: api/Seminar/5/Group
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/group")]
@@ -133,6 +136,8 @@ namespace Xmu.Crms.Group1.Controllers
             else
                 return Json(new { status = "false" });
         }
+
+        //获取剩下的话题
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/topic")]
         public IActionResult GetTopic(long id, [FromQuery]long classid)

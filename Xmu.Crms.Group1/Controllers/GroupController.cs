@@ -17,6 +17,8 @@ namespace Xmu.Crms.Group1.Controllers
         private IGradeService gradeService;
         private ISeminarGroupService seminarGroupService;
         private ITopicService topicService;
+
+        //构造函数
         public GroupController(IGradeService gradeService, ISeminarGroupService seminarGroupService, ITopicService topicService)
         {
             this.gradeService = gradeService;
@@ -24,6 +26,7 @@ namespace Xmu.Crms.Group1.Controllers
             this.topicService = topicService;
         }
 
+        //上传学生打分
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/grade/presentation")]
         public IActionResult PostGrade(long id, [FromQuery]long topicId, [FromQuery]int grade)
@@ -33,6 +36,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(new { status = 200 });
         }
 
+        //通过Groupid获取所有的seminar
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}")]
         public IActionResult Get(long id)
@@ -42,6 +46,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(group);
         }
 
+        //获取组长
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/leader")]
         public IActionResult GetLeader(long id)
@@ -52,6 +57,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(new { isLeader = false });
         }
 
+        //组长辞职
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/resign")]
         public IActionResult Resign(long id)
@@ -61,6 +67,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(new { status = 200 });
         }
 
+        //申请当组长
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/assign")]
         public IActionResult Assign(long id)
@@ -74,9 +81,10 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(new { isLeader = false });
         }
 
+        //选话题
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("{id}/topic")]
-        public IActionResult Assign(long id, [FromQuery]long topicId)
+        public IActionResult Choosetopic(long id, [FromQuery]long topicId)
         {
             var userId = long.Parse(User.Claims.Single(c => c.Type == "id").Value);
             var group = seminarGroupService.GetSeminarGroupByGroupId(id);
@@ -85,6 +93,8 @@ namespace Xmu.Crms.Group1.Controllers
             seminarGroupService.InsertTopicByGroupId(id, topicId);
             return Json(new { isChoose = true });
         }
+
+        //通过seminarid和calssId获取所有小组
         [HttpGet("all")]
         public IActionResult GetAllGroup([FromQuery]long seminarId, [FromQuery]long classId)
         {
@@ -98,12 +108,15 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(list);
         }
 
+        //通过groupid获得小组
         [HttpGet("getgroup")]
         public IActionResult GetGroup([FromQuery]long groupid)
         {
             var group = seminarGroupService.ListSeminarGroupMemberByGroupId(groupid);
             return Json(new { members = group });
         }
+
+        //将id为userid的同学加入id为groupid的小组
         [HttpGet("add")]
         public IActionResult addStudent([FromQuery]long groupid, [FromQuery]long userid)
         {
@@ -111,6 +124,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(new { status = "200" });
         }
 
+        //将id为userid的同学从id为groupid的小组中删除
         [HttpGet("delete")]
         public IActionResult deleteStudent([FromQuery]long groupid, [FromQuery]long userid)
         {

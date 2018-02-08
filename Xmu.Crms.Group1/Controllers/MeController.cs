@@ -56,6 +56,7 @@ namespace Xmu.Crms.Group1.Controllers
             return Json(user);
         }
 
+        //学生签到
         [Authorize(AuthenticationSchemes = JwtBearerDefaults.AuthenticationScheme)]
         [HttpGet("rollcall")]
         public IActionResult rollCall([FromQuery]long classId, [FromQuery]long seminarId, [FromQuery]string longitude, [FromQuery]string latitude)
